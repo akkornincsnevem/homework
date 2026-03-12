@@ -1,0 +1,154 @@
+openapi: 3.0.0
+info:
+  title: Étel Nyilvántartás API
+  description: "API az ételek nyilvántartására, ahol minden ételhez egyedi azonosító\
+    t és nevet rendelünk."
+  version: 1.0.0
+servers:
+- url: https://oe-html-5-2025-tavasz.wiremockapi.cloud/api
+- url: http://localhost:8080/api
+  description: Helyi fejlesztői szerver
+paths:
+  /takeout:
+    get:
+      summary: Ételek listázása
+      description: Lekérdezi az összes ételt.
+      responses:
+        "200":
+          description: Az ételek sikeresen lekérdezve
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Takeout"
+              example:
+              - id: 1
+                name: Hamburger
+              - id: 2
+                name: Pizza
+              - id: 3
+                name: Rántott hús
+    post:
+      summary: Új étel hozzáadása
+      description: Új ételt ad hozzá a nyilvántartáshoz.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Takeout"
+      responses:
+        "201":
+          description: Az étel sikeresen hozzáadva
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Takeout"
+              example:
+                id: 4
+                name: Rántotta
+  /takeout/{id}:
+    get:
+      summary: Étel lekérdezése
+      description: Lekérdezi egy adott ételt az ID alapján.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        description: Az étel egyedi azonosítója.
+      responses:
+        "200":
+          description: Az étel sikeresen lekérdezve
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Takeout"
+              example:
+                id: 1
+                name: Hamburger
+        "404":
+          description: Az étel nem található
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Étel nem található
+    put:
+      summary: Étel módosítása
+      description: Módosítja az étel nevét az ID alapján.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        description: Az étel egyedi azonosítója.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Takeout"
+      responses:
+        "200":
+          description: Az étel sikeresen módosítva
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Takeout"
+              example:
+                id: 1
+                name: Muffin
+        "404":
+          description: Az étel nem található
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Étel nem található
+    delete:
+      summary: Étel törlése
+      description: Törli az ételt az ID alapján.
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        description: Az étel egyedi azonosítója.
+      responses:
+        "204":
+          description: Az étel sikeresen törölve
+        "404":
+          description: Az étel nem található
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Étel nem található
+components:
+  schemas:
+    Takeout:
+      type: object
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: integer
+          description: Az étel egyedi azonosítója.
+        name:
+          type: string
+          description: Az étel neve.

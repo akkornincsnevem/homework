@@ -1,0 +1,11 @@
+
+
+hideGenerationTimestamp: true
+additionalProperties:
+  artifactId: spring
+  serializableModel: "true"
+  dateLibrary: java8
+  useLombok: true
+configOptions:
+  interfaceOnly: true
+  skipDefaultInterface: true
