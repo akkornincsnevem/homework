@@ -5,10 +5,137 @@ info:
     t és nevet rendelünk."
   version: 1.0.0
 servers:
-- url: https://oe-html-5-2025-tavasz.wiremockapi.cloud/api
 - url: http://localhost:8080/api
   description: Helyi fejlesztői szerver
 paths:
+  /categories:
+    get:
+      summary: Ételcsoportok listázása
+      description: Lekérdezi az összes ételcsoportot.
+      responses:
+        "200":
+          description: Az ételcsoportok sikeresen lekérdezve.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Categories"
+                example:
+                  - id: 1
+                    name: Tészta
+                  - id: 2
+                    name: Leves
+    post:
+      summary: Új ételcsoport hozzáadása
+      description: Új ételcsoportot ad hozzá a nyilvántartáshoz.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Categories"
+      responses:
+        "201":
+          description: Az ételcsoport sikeresen hozzáadva
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Categories"
+              example:
+                id: 4
+                name: Desszert
+  /categories/{id}:
+      get:
+        summary: Ételcsoport lekérdezése
+        description: Lekérdezi egy adott ételcsoport az ID alapján.
+        parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+            description: Az ételcsoport egyedi azonosítója.
+        responses:
+          "200":
+            description: Az ételcsoport sikeresen lekérdezve
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Categories"
+                example:
+                  id: 1
+                  name: Tészta
+          "404":
+            description: Az ételcsoport nem található
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: Ételcsoport nem található
+      put:
+        summary: Ételcsoport módosítása
+        description: Módosítja az ételcsoport nevét az ID alapján.
+        parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+            description: Az ételcsoport egyedi azonosítója.
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Categories"
+        responses:
+          "200":
+            description: Az ételcsoport sikeresen módosítva
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Categories"
+                example:
+                  id: 1
+                  name: Gomba
+          "404":
+            description: Az ételcsoport nem található
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: Ételcsoport nem található
+      delete:
+        summary: Ételcsoport törlése
+        description: Törli az ételcsoportot az ID alapján.
+        parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+            description: Az ételcsoport egyedi azonosítója.
+        responses:
+          "204":
+            description: Az ételcsoport sikeresen törölve
+          "404":
+            description: Az ételcsoport nem található
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: Ételcsoport nem található
+
   /takeout:
     get:
       summary: Ételek listázása
@@ -25,10 +152,16 @@ paths:
               example:
               - id: 1
                 name: Hamburger
+                price: 1500
+                categoryId: 1
               - id: 2
                 name: Pizza
+                price: 1500
+                categoryId: 2
               - id: 3
                 name: Rántott hús
+                price: 1500
+                categoryId: 3
     post:
       summary: Új étel hozzáadása
       description: Új ételt ad hozzá a nyilvántartáshoz.
@@ -48,6 +181,8 @@ paths:
               example:
                 id: 4
                 name: Rántotta
+                price: 550
+                categoryId: 1
   /takeout/{id}:
     get:
       summary: Étel lekérdezése
@@ -69,6 +204,8 @@ paths:
               example:
                 id: 1
                 name: Hamburger
+                price: 1500
+                categoryId: 1
         "404":
           description: Az étel nem található
           content:
@@ -105,6 +242,8 @@ paths:
               example:
                 id: 1
                 name: Muffin
+                price: 1500
+                categoryId: 1
         "404":
           description: Az étel nem található
           content:
@@ -145,6 +284,7 @@ components:
       required:
       - id
       - name
+      - price
       properties:
         id:
           type: integer
@@ -152,3 +292,24 @@ components:
         name:
           type: string
           description: Az étel neve.
+          x-field-extra-annotation: '@hu.oe.takeout.validation.NameExists(message="error.customer.name.exists")'
+        price:
+          type: integer
+          description: Az étel ára.
+        categoryId:
+          type: integer
+          description: Az ételhez tartozó csoport.
+    Categories:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          description: Az ételcsoport egyedi azonosítója.
+        name:
+          type: string
+          description: Az ételcsoport neve.
+          x-field-extra-annotation: '@hu.oe.takeout.validation.NameExists(message="error.customer.name.exists")'
+
