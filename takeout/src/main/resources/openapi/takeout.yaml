@@ -45,6 +45,19 @@ paths:
               example:
                 id: 4
                 name: Desszert
+        "404":
+          description: "A csoport már létezik"
+          content:
+            application/json:
+              schema:
+                type: object
+                schema:
+                  $ref: "#/components/schemas/ApiError"
+                example:
+                  path: "/categories"
+                  message: "error.validation"
+                  errors:
+                    - "error.categories.name.exists"
   /categories/{id}:
       get:
         summary: Ételcsoport lekérdezése
@@ -183,6 +196,19 @@ paths:
                 name: Rántotta
                 price: 550
                 categoryId: 1
+        "404":
+          description: Az étel már létezik
+          content:
+            application/json:
+              schema:
+                type: object
+                schema:
+                  $ref: "#/components/schemas/ApiError"
+                example:
+                  path: "/takeout"
+                  message: "error.validation"
+                  errors:
+                    - "error.takeout.name.exists"
   /takeout/{id}:
     get:
       summary: Étel lekérdezése
@@ -312,4 +338,13 @@ components:
           type: string
           description: Az ételcsoport neve.
           x-field-extra-annotation: '@hu.oe.takeout.validation.NameExists(message="error.customer.name.exists")'
-
+    ApiError:
+      type: object
+      properties:
+        path:
+          type: string
+        message:
+          type: string
+        errors:
+          type: array
+          items: string

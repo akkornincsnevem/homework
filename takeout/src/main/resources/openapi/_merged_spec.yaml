@@ -1,0 +1,17 @@
+---
+servers:
+- url: "http://localhost:8080"
+openapi: "3.0.0"
+paths:
+  /categories/{id}:
+    $ref: "./takeout.yaml#/paths/~1categories~1{id}"
+  /takeout/{id}:
+    $ref: "./takeout.yaml#/paths/~1takeout~1{id}"
+  /takeout:
+    $ref: "./takeout.yaml#/paths/~1takeout"
+  /categories:
+    $ref: "./takeout.yaml#/paths/~1categories"
+info:
+  title: "merged spec"
+  description: "merged spec"
+  version: "1.0.0"
