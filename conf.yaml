@@ -1,5 +1,3 @@
-
-
 hideGenerationTimestamp: true
 additionalProperties:
   artifactId: spring

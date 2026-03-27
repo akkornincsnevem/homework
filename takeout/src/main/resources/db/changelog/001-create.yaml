@@ -1,0 +1,65 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-food-create
+      author: Darvai Benjámin
+      labels: Kategóriák tábla létrehozása
+      context: public
+      comment: Kategóriák szerkezete
+      changes:
+        - createTable:
+            schemaName: public
+            tableName: category
+            columns:
+            - column:
+                name: id
+                type: uuid
+                ##defaultValueComputed: uuid_generate_v4 ()
+                remarks: egyedi azonosító
+                constraints:
+                  primaryKey: true
+                  primaryKeyName: TRANSACTION_ID
+                  nullable: false
+            - column:
+                name: name
+                type: varchar(255)
+                remarks: Kategória neve
+                constraints:
+                  nullable: false
+
+  - changeSet:
+      id: 002-create-food-table
+      author: Darvai Benjámin
+      changes:
+        - createTable:
+            tableName: takeout
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  ##defaultValueComputed: uuid_generate_v4()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: takeout
+            baseColumnNames: category_id
+            referencedTableName: category
+            referencedColumnNames: id
+            constraintName: fk_takeout_category
+
