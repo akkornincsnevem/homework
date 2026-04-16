@@ -1,11 +1,14 @@
 package hu.oe.takeout.validation;
 
+import hu.oe.takeout.rdbms.CategoryRepository;
+import hu.oe.takeout.rdbms.TakeoutRepository;
 import jakarta.validation.Constraint;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.annotation.*;
 
@@ -24,6 +27,12 @@ public @interface NameExists {
 @RequiredArgsConstructor
 class NameExistsValidator implements ConstraintValidator<NameExists, String> {
 
+    @Autowired
+    TakeoutRepository takeoutRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
+
     String message;
 
     @Override
@@ -33,6 +42,8 @@ class NameExistsValidator implements ConstraintValidator<NameExists, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return false;
+        if(!takeoutRepository.existsByName(value))
+            return true;
+        else return !categoryRepository.existsByName(value);
     }
 }

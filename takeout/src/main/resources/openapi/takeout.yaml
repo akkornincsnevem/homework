@@ -20,7 +20,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Categories"
+                  $ref: "#/components/schemas/CategoryResponse"
                 example:
                   - id: 1
                     name: Tészta
@@ -34,14 +34,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Categories"
+              $ref: "#/components/schemas/CategoryRequest"
       responses:
         "201":
           description: Az ételcsoport sikeresen hozzáadva
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Categories"
+                $ref: "#/components/schemas/IdModel"
               example:
                 id: 4
                 name: Desszert
@@ -67,7 +67,7 @@ paths:
             name: id
             required: true
             schema:
-              type: integer
+              type: string
             description: Az ételcsoport egyedi azonosítója.
         responses:
           "200":
@@ -75,7 +75,7 @@ paths:
             content:
               application/json:
                 schema:
-                  $ref: "#/components/schemas/Categories"
+                  $ref: "#/components/schemas/CategoryResponse"
                 example:
                   id: 1
                   name: Tészta
@@ -97,21 +97,21 @@ paths:
             name: id
             required: true
             schema:
-              type: integer
+              type: string
             description: Az ételcsoport egyedi azonosítója.
         requestBody:
           required: true
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Categories"
+                $ref: "#/components/schemas/CategoryRequest"
         responses:
           "200":
             description: Az ételcsoport sikeresen módosítva
             content:
               application/json:
                 schema:
-                  $ref: "#/components/schemas/Categories"
+                  $ref: "#/components/schemas/IdModel"
                 example:
                   id: 1
                   name: Gomba
@@ -133,7 +133,7 @@ paths:
             name: id
             required: true
             schema:
-              type: integer
+              type: string
             description: Az ételcsoport egyedi azonosítója.
         responses:
           "204":
@@ -161,7 +161,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Takeout"
+                  $ref: "#/components/schemas/TakeoutResponse"
               example:
               - id: 1
                 name: Hamburger
@@ -183,14 +183,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Takeout"
+              $ref: "#/components/schemas/TakeoutRequest"
       responses:
         "201":
           description: Az étel sikeresen hozzáadva
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Takeout"
+                $ref: "#/components/schemas/IdModel"
               example:
                 id: 4
                 name: Rántotta
@@ -218,7 +218,7 @@ paths:
         name: id
         required: true
         schema:
-          type: integer
+          type: string
         description: Az étel egyedi azonosítója.
       responses:
         "200":
@@ -226,7 +226,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Takeout"
+                $ref: "#/components/schemas/TakeoutResponse"
               example:
                 id: 1
                 name: Hamburger
@@ -250,21 +250,21 @@ paths:
         name: id
         required: true
         schema:
-          type: integer
+          type: string
         description: Az étel egyedi azonosítója.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Takeout"
+              $ref: "#/components/schemas/TakeoutRequest"
       responses:
         "200":
           description: Az étel sikeresen módosítva
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Takeout"
+                $ref: "#/components/schemas/IdModel"
               example:
                 id: 1
                 name: Muffin
@@ -288,7 +288,7 @@ paths:
         name: id
         required: true
         schema:
-          type: integer
+          type: string
         description: Az étel egyedi azonosítója.
       responses:
         "204":
@@ -305,39 +305,57 @@ paths:
                     example: Étel nem található
 components:
   schemas:
-    Takeout:
+    IdModel:
       type: object
-      required:
-      - id
-      - name
-      - price
       properties:
         id:
-          type: integer
-          description: Az étel egyedi azonosítója.
+          type: string
+
+    TakeoutRequest:
+      type: object
+      required:
+      - name
+      - price
+      - id
+      properties:
         name:
           type: string
-          description: Az étel neve.
-          x-field-extra-annotation: '@hu.oe.takeout.validation.NameExists(message="error.customer.name.exists")'
+          description: Étel neve
+          x-field-extra-annotation: '@hu.oe.takeout.validation.NameExists(message="error.takeout.name.exists")'
         price:
           type: integer
           description: Az étel ára.
         categoryId:
-          type: integer
+          type: string
           description: Az ételhez tartozó csoport.
-    Categories:
+        description:
+          type: string
+          description: Leírás
+    TakeoutResponse:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/IdModel'
+        - $ref: '#/components/schemas/TakeoutRequest'
+
+    CategoryRequest:
       type: object
       required:
         - id
         - name
       properties:
-        id:
-          type: integer
-          description: Az ételcsoport egyedi azonosítója.
         name:
           type: string
-          description: Az ételcsoport neve.
-          x-field-extra-annotation: '@hu.oe.takeout.validation.NameExists(message="error.customer.name.exists")'
+          description: Kategória neve
+          x-field-extra-annotation: '@hu.oe.takeout.validation.NameExists(message="error.category.name.exists")'
+        description:
+          type: string
+          description: Leírás
+    CategoryResponse:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/IdModel'
+        - $ref: '#/components/schemas/CategoryRequest'
+
     ApiError:
       type: object
       properties:
