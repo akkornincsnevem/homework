@@ -2,8 +2,20 @@ server:
   port: 8080
   name: customer
 
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/food
+    username: oeuser
+    password: password
+    driver-class-name: org.postgresql.Driver
 
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
 
+  liquibase:
+    enabled: true
 
 springdoc:
   swagger-ui:
@@ -12,4 +24,3 @@ springdoc:
     show-common-extensions: true
   api-docs:
     path: /v3/api-docs/valami
-
