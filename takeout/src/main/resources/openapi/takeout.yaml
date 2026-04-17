@@ -316,7 +316,6 @@ components:
       required:
       - name
       - price
-      - id
       properties:
         name:
           type: string

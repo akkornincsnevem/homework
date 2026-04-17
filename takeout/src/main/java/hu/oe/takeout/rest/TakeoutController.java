@@ -30,12 +30,24 @@ public class TakeoutController implements DefaultApi {
 
     @Override
     public ResponseEntity<List<CategoryResponse>> categoriesGet() {
-        return null;
+        List<CategoryResponse> result = categoryRepository.findAll()
+                .stream()
+                .map(cat -> modelMapper.map(cat, CategoryResponse.class))
+                .toList();
+
+        return ResponseEntity.ok(result);
     }
 
     @Override
     public ResponseEntity<Void> categoriesIdDelete(String id) {
-        return null;
+        UUID uuid = UUID.fromString(id);
+
+        if (!categoryRepository.existsById(uuid)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        categoryRepository.deleteById(uuid);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
@@ -45,7 +57,17 @@ public class TakeoutController implements DefaultApi {
 
     @Override
     public ResponseEntity<IdModel> categoriesIdPut(String id, CategoryRequest categoryRequest) {
-        return null;
+        UUID uuid = UUID.fromString(id);
+
+        return categoryRepository.findById(uuid)
+                .map(existing -> {
+                    existing.setName(categoryRequest.getName());
+
+                    Category saved = categoryRepository.save(existing);
+
+                    return ResponseEntity.ok(modelMapper.map(saved, IdModel.class));
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
@@ -60,12 +82,24 @@ public class TakeoutController implements DefaultApi {
 
     @Override
     public ResponseEntity<List<TakeoutResponse>> takeoutGet() {
-        return null;
+        List<TakeoutResponse> result = takeoutRepository.findAll()
+                .stream()
+                .map(t -> modelMapper.map(t, TakeoutResponse.class))
+                .toList();
+
+        return ResponseEntity.ok(result);
     }
 
     @Override
     public ResponseEntity<Void> takeoutIdDelete(String id) {
-        return null;
+        UUID uuid = UUID.fromString(id);
+
+        if (!takeoutRepository.existsById(uuid)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        takeoutRepository.deleteById(uuid);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
@@ -75,16 +109,46 @@ public class TakeoutController implements DefaultApi {
 
     @Override
     public ResponseEntity<IdModel> takeoutIdPut(String id, TakeoutRequest takeoutRequest) {
-        return null;
+        UUID uuid = UUID.fromString(id);
+
+        return takeoutRepository.findById(uuid)
+                .map(existing -> {
+                    existing.setName(takeoutRequest.getName());
+                    existing.setPrice(takeoutRequest.getPrice());
+
+                    // ⚠️ category handling (important)
+                    if (takeoutRequest.getCategoryId() != null) {
+                        Category category = categoryRepository
+                                .findById(UUID.fromString(takeoutRequest.getCategoryId()))
+                                .orElseThrow();
+
+                        existing.setCategory(category);
+                    }
+
+                    Takeout saved = takeoutRepository.save(existing);
+
+                    return ResponseEntity.ok(modelMapper.map(saved, IdModel.class));
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Override
     public ResponseEntity<IdModel> takeoutPost(TakeoutRequest takeoutRequest) {
-        return ResponseEntity.ok(
-                modelMapper.map(
-                        takeoutRepository.save(
-                                modelMapper.map(takeoutRequest, Takeout.class)),
-                        IdModel.class)
-        );
+
+        Takeout entity = modelMapper.map(takeoutRequest, Takeout.class);
+
+        // 🔥 CRITICAL FIX
+        entity.setId(null);  // force INSERT instead of UPDATE
+
+        Category category = categoryRepository
+                .findById(UUID.fromString(takeoutRequest.getCategoryId()))
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        entity.setCategory(category);
+
+        Takeout saved = takeoutRepository.save(entity);
+
+        return ResponseEntity.status(201)
+                .body(modelMapper.map(saved, IdModel.class));
     }
 }
