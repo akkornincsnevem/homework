@@ -311,7 +311,7 @@
                 </executions>
                 <configuration>
                     <templatePath>../_templates/hibernate</templatePath>
-                    <packageName>hu.oe.yokudlela.takeout.generated.entity</packageName>
+                    <packageName>hu.oe.takeout.entity</packageName>
 
                     <revengFile>src/main/resources/hibernate.reveng.xml</revengFile>
                     <propertyFile>src/main/resources/_hibernate.properties</propertyFile>
