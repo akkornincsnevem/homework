@@ -1,8 +1,7 @@
 package hu.oe.takeout.rdbms;
 
-import hu.oe.takeout.entity.Takeout;
+import hu.oe.takeout.takeout.generated.entity.Takeout;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;

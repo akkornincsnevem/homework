@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +65,7 @@ public interface DefaultApi {
         value = "/categories",
         produces = { "application/json" }
     )
+    @RolesAllowed("view")
     
     ResponseEntity<List<CategoryResponse>> categoriesGet(
         
@@ -94,6 +96,7 @@ public interface DefaultApi {
         value = "/categories/{id}",
         produces = { "application/json" }
     )
+    @RolesAllowed("edit")
     
     ResponseEntity<Void> categoriesIdDelete(
         @Parameter(name = "id", description = "Az ételcsoport egyedi azonosítója.", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
@@ -126,6 +129,7 @@ public interface DefaultApi {
         value = "/categories/{id}",
         produces = { "application/json" }
     )
+    @RolesAllowed("view")
     
     ResponseEntity<CategoryResponse> categoriesIdGet(
         @Parameter(name = "id", description = "Az ételcsoport egyedi azonosítója.", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
@@ -160,6 +164,7 @@ public interface DefaultApi {
         produces = { "application/json" },
         consumes = { "application/json" }
     )
+    @RolesAllowed("edit")
     
     ResponseEntity<IdModel> categoriesIdPut(
         @Parameter(name = "id", description = "Az ételcsoport egyedi azonosítója.", required = true, in = ParameterIn.PATH) @PathVariable("id") String id,
@@ -172,7 +177,7 @@ public interface DefaultApi {
      * Új ételcsoportot ad hozzá a nyilvántartáshoz.
      *
      * @param categoryRequest  (required)
-     * @return Az ételcsoport sikeresen hozzáadva (status code 201)
+     * @return Az ételcsoport sikeresen hozzáadva. (status code 201)
      *         or A csoport már létezik (status code 404)
      */
     @Operation(
@@ -180,7 +185,7 @@ public interface DefaultApi {
         summary = "Új ételcsoport hozzáadása",
         description = "Új ételcsoportot ad hozzá a nyilvántartáshoz.",
         responses = {
-            @ApiResponse(responseCode = "201", description = "Az ételcsoport sikeresen hozzáadva", content = {
+            @ApiResponse(responseCode = "201", description = "Az ételcsoport sikeresen hozzáadva.", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = IdModel.class))
             }),
             @ApiResponse(responseCode = "404", description = "A csoport már létezik", content = {
@@ -194,6 +199,7 @@ public interface DefaultApi {
         produces = { "application/json" },
         consumes = { "application/json" }
     )
+    @RolesAllowed("edit")
     
     ResponseEntity<IdModel> categoriesPost(
         @Parameter(name = "CategoryRequest", description = "", required = true) @Valid @RequestBody CategoryRequest categoryRequest
@@ -221,6 +227,7 @@ public interface DefaultApi {
         value = "/takeout",
         produces = { "application/json" }
     )
+    @RolesAllowed("view")
     
     ResponseEntity<List<TakeoutResponse>> takeoutGet(
         
@@ -251,6 +258,7 @@ public interface DefaultApi {
         value = "/takeout/{id}",
         produces = { "application/json" }
     )
+    @RolesAllowed("edit")
     
     ResponseEntity<Void> takeoutIdDelete(
         @Parameter(name = "id", description = "Az étel egyedi azonosítója.", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
@@ -283,6 +291,7 @@ public interface DefaultApi {
         value = "/takeout/{id}",
         produces = { "application/json" }
     )
+    @RolesAllowed("view")
     
     ResponseEntity<TakeoutResponse> takeoutIdGet(
         @Parameter(name = "id", description = "Az étel egyedi azonosítója.", required = true, in = ParameterIn.PATH) @PathVariable("id") String id
@@ -317,6 +326,7 @@ public interface DefaultApi {
         produces = { "application/json" },
         consumes = { "application/json" }
     )
+    @RolesAllowed("edit")
     
     ResponseEntity<IdModel> takeoutIdPut(
         @Parameter(name = "id", description = "Az étel egyedi azonosítója.", required = true, in = ParameterIn.PATH) @PathVariable("id") String id,
@@ -351,6 +361,7 @@ public interface DefaultApi {
         produces = { "application/json" },
         consumes = { "application/json" }
     )
+    @RolesAllowed("edit")
     
     ResponseEntity<IdModel> takeoutPost(
         @Parameter(name = "TakeoutRequest", description = "", required = true) @Valid @RequestBody TakeoutRequest takeoutRequest

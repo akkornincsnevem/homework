@@ -85,6 +85,18 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
 
     </dependencies>
 
@@ -311,7 +323,7 @@
                 </executions>
                 <configuration>
                     <templatePath>../_templates/hibernate</templatePath>
-                    <packageName>hu.oe.takeout.entity</packageName>
+                    <packageName>hu.oe.takeout.takeout.generated.rest.entity</packageName>
 
                     <revengFile>src/main/resources/hibernate.reveng.xml</revengFile>
                     <propertyFile>src/main/resources/_hibernate.properties</propertyFile>

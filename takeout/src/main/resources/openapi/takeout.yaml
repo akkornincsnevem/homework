@@ -12,6 +12,9 @@ paths:
     get:
       summary: Ételcsoportok listázása
       description: Lekérdezi az összes ételcsoportot.
+      security:
+        - BearerAuth: [ ]
+      x-operation-extra-annotation: '@RolesAllowed("view")'
       responses:
         "200":
           description: Az ételcsoportok sikeresen lekérdezve.
@@ -29,6 +32,9 @@ paths:
     post:
       summary: Új ételcsoport hozzáadása
       description: Új ételcsoportot ad hozzá a nyilvántartáshoz.
+      security:
+        - BearerAuth: [ ]
+      x-operation-extra-annotation: '@RolesAllowed("edit")'
       requestBody:
         required: true
         content:
@@ -37,7 +43,7 @@ paths:
               $ref: "#/components/schemas/CategoryRequest"
       responses:
         "201":
-          description: Az ételcsoport sikeresen hozzáadva
+          description: Az ételcsoport sikeresen hozzáadva.
           content:
             application/json:
               schema:
@@ -62,6 +68,9 @@ paths:
       get:
         summary: Ételcsoport lekérdezése
         description: Lekérdezi egy adott ételcsoport az ID alapján.
+        security:
+          - BearerAuth: [ ]
+        x-operation-extra-annotation: '@RolesAllowed("view")'
         parameters:
           - in: path
             name: id
@@ -92,6 +101,9 @@ paths:
       put:
         summary: Ételcsoport módosítása
         description: Módosítja az ételcsoport nevét az ID alapján.
+        security:
+          - BearerAuth: [ ]
+        x-operation-extra-annotation: '@RolesAllowed("edit")'
         parameters:
           - in: path
             name: id
@@ -128,6 +140,9 @@ paths:
       delete:
         summary: Ételcsoport törlése
         description: Törli az ételcsoportot az ID alapján.
+        security:
+          - BearerAuth: [ ]
+        x-operation-extra-annotation: '@RolesAllowed("edit")'
         parameters:
           - in: path
             name: id
@@ -153,6 +168,9 @@ paths:
     get:
       summary: Ételek listázása
       description: Lekérdezi az összes ételt.
+      security:
+        - BearerAuth: [ ]
+      x-operation-extra-annotation: '@RolesAllowed("view")'
       responses:
         "200":
           description: Az ételek sikeresen lekérdezve
@@ -178,6 +196,9 @@ paths:
     post:
       summary: Új étel hozzáadása
       description: Új ételt ad hozzá a nyilvántartáshoz.
+      security:
+        - BearerAuth: [ ]
+      x-operation-extra-annotation: '@RolesAllowed("edit")'
       requestBody:
         required: true
         content:
@@ -213,6 +234,9 @@ paths:
     get:
       summary: Étel lekérdezése
       description: Lekérdezi egy adott ételt az ID alapján.
+      security:
+        - BearerAuth: [ ]
+      x-operation-extra-annotation: '@RolesAllowed("view")'
       parameters:
       - in: path
         name: id
@@ -245,6 +269,9 @@ paths:
     put:
       summary: Étel módosítása
       description: Módosítja az étel nevét az ID alapján.
+      security:
+        - BearerAuth: [ ]
+      x-operation-extra-annotation: '@RolesAllowed("edit")'
       parameters:
       - in: path
         name: id
@@ -283,6 +310,9 @@ paths:
     delete:
       summary: Étel törlése
       description: Törli az ételt az ID alapján.
+      security:
+        - BearerAuth: [ ]
+      x-operation-extra-annotation: '@RolesAllowed("edit")'
       parameters:
       - in: path
         name: id
@@ -304,6 +334,12 @@ paths:
                     type: string
                     example: Étel nem található
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     IdModel:
       type: object
@@ -365,3 +401,5 @@ components:
         errors:
           type: array
           items: string
+security:
+  - BearerAuth: []
