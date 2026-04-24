@@ -17,8 +17,9 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * CategoryResponse
- */
+* CategoryResponse
+*/
+
 @lombok.Data
 @lombok.NoArgsConstructor
 @lombok.AllArgsConstructor
@@ -27,14 +28,23 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.10.0")
 public class CategoryResponse implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String id;
 
-  @hu.oe.takeout.validation.NameExists(message="error.category.name.exists")
-  private String name;
 
-  private String description;
+            private String id;
+    public static final String FIELD_ID="id";
 
-}
+        @hu.oe.takeout.validation.NameExists(message="error.category.name.exists")
+
+
+            private String name;
+    public static final String FIELD_NAME="name";
+
+
+
+            private String description;
+    public static final String FIELD_DESCRIPTION="description";
+
+    }
 

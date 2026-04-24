@@ -173,9 +173,9 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <!--
-                                                        <templateDirectory>${project.basedir}/../_templates</templateDirectory>
-                            -->
+
+                            <templateDirectory>${project.basedir}/../_templates/openapi/spring</templateDirectory>
+
                             <skipValidateSpec>true</skipValidateSpec>
                             <inputSpecRootDirectory>${project.basedir}/src/main/resources/openapi
                             </inputSpecRootDirectory>
@@ -218,7 +218,7 @@
                                 <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
                                 <generatedConstructorWithNoArgs>false</generatedConstructorWithNoArgs>
                                 <performBeanValidation>true</performBeanValidation>
-                                <generateApis>false</generateApis>
+                                <generateApis>true</generateApis>
                             </configOptions>
                             <typeMappings>LocalDate=Date</typeMappings>
                             <importMappings>

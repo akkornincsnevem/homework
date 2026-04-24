@@ -17,8 +17,9 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * TakeoutRequest
- */
+* TakeoutRequest
+*/
+
 @lombok.Data
 @lombok.NoArgsConstructor
 @lombok.AllArgsConstructor
@@ -27,16 +28,28 @@ import jakarta.annotation.Generated;
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.10.0")
 public class TakeoutRequest implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  @hu.oe.takeout.validation.NameExists(message="error.takeout.name.exists")
-  private String name;
+        @hu.oe.takeout.validation.NameExists(message="error.takeout.name.exists")
 
-  private Integer price;
 
-  private String categoryId;
+            private String name;
+    public static final String FIELD_NAME="name";
 
-  private String description;
 
-}
+
+            private Integer price;
+    public static final String FIELD_PRICE="price";
+
+
+
+            private String categoryId;
+    public static final String FIELD_CATEGORYID="categoryId";
+
+
+
+            private String description;
+    public static final String FIELD_DESCRIPTION="description";
+
+    }
 

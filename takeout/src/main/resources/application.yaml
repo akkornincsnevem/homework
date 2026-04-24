@@ -1,6 +1,6 @@
 server:
   port: 8080
-  name: takeout
+  name: customer
 
 spring:
   datasource:

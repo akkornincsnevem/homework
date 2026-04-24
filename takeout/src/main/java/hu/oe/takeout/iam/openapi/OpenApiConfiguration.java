@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @SecurityScheme(
     type = SecuritySchemeType.OPENIDCONNECT,
-    name = "OpenAPI",
+    name = "BearerAuth",  //OpenAPI
     description = "KeyCloak Local dev from IDE",
     openIdConnectUrl = "http://localhost:9080/realms/oe/.well-known/openid-configuration")
 @OpenAPIDefinition(

@@ -18,20 +18,24 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * TakeoutIdGet404Response
- */
+* TakeoutIdGet404Response
+*/
+
 @lombok.Data
 @lombok.NoArgsConstructor
 @lombok.AllArgsConstructor
 @lombok.Builder
 
-@JsonTypeName("_takeout__id__get_404_response")
+            @JsonTypeName("_takeout__id__get_404_response")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.10.0")
 public class TakeoutIdGet404Response implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private String error;
 
-}
+
+            private String error;
+    public static final String FIELD_ERROR="error";
+
+    }
 
