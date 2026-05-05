@@ -27,11 +27,8 @@ public @interface NameExists {
 @RequiredArgsConstructor
 class NameExistsValidator implements ConstraintValidator<NameExists, String> {
 
-    @Autowired
-    TakeoutRepository takeoutRepository;
-
-    @Autowired
-    CategoryRepository categoryRepository;
+    private final TakeoutRepository takeoutRepository;
+    private final CategoryRepository categoryRepository;
 
     String message;
 
@@ -42,8 +39,14 @@ class NameExistsValidator implements ConstraintValidator<NameExists, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if(!takeoutRepository.existsByName(value))
-            return true;
-        else return !categoryRepository.existsByName(value);
+
+        if (value == null || value.isBlank()) {
+            return true; // let @NotBlank handle emptiness if needed
+        }
+
+        boolean existsInTakeout = takeoutRepository.existsByName(value);
+        boolean existsInCategory = categoryRepository.existsByName(value);
+
+        return !existsInTakeout && !existsInCategory;
     }
 }

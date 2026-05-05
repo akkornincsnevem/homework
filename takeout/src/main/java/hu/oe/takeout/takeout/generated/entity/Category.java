@@ -3,12 +3,8 @@ package hu.oe.takeout.takeout.generated.entity;
 
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -16,8 +12,9 @@ import java.util.UUID;
 
             @lombok.Builder @lombok.AllArgsConstructor @lombok.NoArgsConstructor @lombok.Getter @lombok.Setter @lombok.experimental.FieldNameConstants
         @Entity
-        @Table(name="category"
-)
+            @Table(name = "category", uniqueConstraints = {
+                    @UniqueConstraint(columnNames = "name")
+            })
 public class Category  implements java.io.Serializable {
 
 

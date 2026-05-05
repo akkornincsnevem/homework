@@ -63,3 +63,17 @@ databaseChangeLog:
             referencedColumnNames: id
             constraintName: fk_takeout_category
 
+  - changeSet:
+      id: 003-add-unique-constraints
+      author: Darvai Benjámin
+      changes:
+        - addUniqueConstraint:
+            tableName: category
+            columnNames: name
+            constraintName: uk_category_name
+
+        - addUniqueConstraint:
+            tableName: takeout
+            columnNames: name
+            constraintName: uk_takeout_name
+

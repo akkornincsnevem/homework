@@ -1,6 +1,9 @@
 package hu.oe.takeout.service;
 
+import hu.oe.takeout.DataValidationException;
+import hu.oe.takeout.rdbms.CategoryRepository;
 import hu.oe.takeout.rdbms.TakeoutRepository;
+import hu.oe.takeout.takeout.generated.entity.Category;
 import hu.oe.takeout.takeout.generated.entity.Takeout;
 import hu.oe.takeout.takeout.generated.rest.model.IdModel;
 import hu.oe.takeout.takeout.generated.rest.model.TakeoutRequest;
@@ -18,18 +21,19 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TakeoutService {
 
-    private final TakeoutRepository categoryRepository;
+    private final TakeoutRepository takeoutRepository;
+    private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
 
     public List<TakeoutResponse> getAll() {
-        return categoryRepository.findAll()
+        return takeoutRepository.findAll()
                 .stream()
                 .map(cat -> modelMapper.map(cat, TakeoutResponse.class))
                 .toList();
     }
 
     public TakeoutResponse getById(String id) {
-        return categoryRepository.findById(UUID.fromString(id))
+        return takeoutRepository.findById(UUID.fromString(id))
                 .map(cat -> modelMapper.map(cat, TakeoutResponse.class))
                 .orElseThrow(() -> new RuntimeException("Takeout not found"));
     }
@@ -37,17 +41,28 @@ public class TakeoutService {
     public void delete(String id) {
         UUID uuid = UUID.fromString(id);
 
-        if (!categoryRepository.existsById(uuid)) {
+        if (!takeoutRepository.existsById(uuid)) {
             throw new RuntimeException("Takeout not found");
         }
 
-        categoryRepository.deleteById(uuid);
+        takeoutRepository.deleteById(uuid);
     }
 
     public IdModel create(TakeoutRequest request) {
-        Takeout saved = categoryRepository.save(
-                modelMapper.map(request, Takeout.class)
-        );
+        if (takeoutRepository.existsByName(request.getName())) {
+            throw new DataValidationException("error.takeout.name.exists");
+        }
+        Takeout entity = modelMapper.map(request, Takeout.class);
+
+        entity.setId(null);
+
+        Category category = categoryRepository
+                .findById(UUID.fromString(request.getCategoryId()))
+                .orElseThrow(()-> new RuntimeException("Category not found"));
+
+        entity.setCategory(category);
+
+        Takeout saved = takeoutRepository.save(entity);
 
         return modelMapper.map(saved, IdModel.class);
     }
@@ -55,13 +70,24 @@ public class TakeoutService {
     public Optional<IdModel> update(String id, TakeoutRequest request) {
         UUID uuid = UUID.fromString(id);
 
-        Takeout existing = categoryRepository.findById(uuid)
-                .orElseThrow(() -> new RuntimeException("Takeout not found"));
+        return takeoutRepository.findById(uuid)
+                .map(existing -> {
+                    if (takeoutRepository.existsByName(request.getName())
+                            && !existing.getName().equals(request.getName())) {
+                        throw new DataValidationException("error.takeout.name.exists");
+                    }
+                    existing.setName(request.getName());
+                    existing.setPrice(request.getPrice());
 
-        existing.setName(request.getName());
+                    if (request.getCategoryId() != null) {
+                        Category category = categoryRepository
+                                .findById(UUID.fromString(request.getCategoryId()))
+                                .orElseThrow();
+                        existing.setCategory(category);
+                    }
 
-        Takeout saved = categoryRepository.save(existing);
-
-        return modelMapper.map(saved, IdModel.class);
+                    Takeout saved = takeoutRepository.save(existing);
+                    return modelMapper.map(saved, IdModel.class);
+                });
     }
 }

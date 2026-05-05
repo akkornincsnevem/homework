@@ -93,4 +93,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<Object> handleDataIntegrityViolation(Exception ex) {
+        log.error(ex.getLocalizedMessage(), ex);
+
+        ApiError res = new ApiError(req.getRequestURI(), "error.validation");
+
+        // you can refine this if needed
+        res.getErrors().add("error.entity.already.exists");
+
+        return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -1,5 +1,6 @@
 package hu.oe.takeout.service;
 
+import hu.oe.takeout.DataValidationException;
 import hu.oe.takeout.rdbms.CategoryRepository;
 import hu.oe.takeout.takeout.generated.entity.Category;
 import hu.oe.takeout.takeout.generated.rest.model.CategoryRequest;
@@ -45,6 +46,9 @@ public class CategoryService {
     }
 
     public IdModel create(CategoryRequest request) {
+        if (categoryRepository.existsByName(request.getName())){
+            throw new DataValidationException("error.category.name.exists");
+        }
         Category saved = categoryRepository.save(
                 modelMapper.map(request, Category.class)
         );
@@ -57,6 +61,13 @@ public class CategoryService {
 
         return categoryRepository.findById(uuid)
                 .map(existing -> {
+
+                    // ✔ prevent duplicate name (but allow same entity)
+                    if (categoryRepository.existsByName(request.getName())
+                            && !existing.getName().equals(request.getName())) {
+                        throw new DataValidationException("error.category.name.exists");
+                    }
+
                     existing.setName(request.getName());
 
                     Category saved = categoryRepository.save(existing);
