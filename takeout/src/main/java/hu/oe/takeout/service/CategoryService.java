@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -51,16 +52,15 @@ public class CategoryService {
         return modelMapper.map(saved, IdModel.class);
     }
 
-    public IdModel update(String id, CategoryRequest request) {
+    public Optional<IdModel> update(String id, CategoryRequest request) {
         UUID uuid = UUID.fromString(id);
 
-        Category existing = categoryRepository.findById(uuid)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+        return categoryRepository.findById(uuid)
+                .map(existing -> {
+                    existing.setName(request.getName());
 
-        existing.setName(request.getName());
-
-        Category saved = categoryRepository.save(existing);
-
-        return modelMapper.map(saved, IdModel.class);
+                    Category saved = categoryRepository.save(existing);
+                    return modelMapper.map(saved, IdModel.class);
+                });
     }
 }

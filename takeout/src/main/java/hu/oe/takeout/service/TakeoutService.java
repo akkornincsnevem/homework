@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -51,7 +52,7 @@ public class TakeoutService {
         return modelMapper.map(saved, IdModel.class);
     }
 
-    public IdModel update(String id, TakeoutRequest request) {
+    public Optional<IdModel> update(String id, TakeoutRequest request) {
         UUID uuid = UUID.fromString(id);
 
         Takeout existing = categoryRepository.findById(uuid)
