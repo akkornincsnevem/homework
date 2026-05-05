@@ -69,6 +69,7 @@ public class TakeoutController implements DefaultApi {
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+    
 
     @Override
     public ResponseEntity<IdModel> categoriesPost(CategoryRequest categoryRequest) {

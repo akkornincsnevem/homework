@@ -33,6 +33,26 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Collecti
     @Override
     public Collection<GrantedAuthority> convert(Jwt jwt) {
         Map<String, Object> resourceAccess = jwt.getClaimAsMap(JWT_PATH);
+
+        if (resourceAccess == null) {
+            return Collections.emptyList();
+        }
+
+        String clientId = jwt.getClaimAsString("azp"); // 🔥 dynamic client
+
+        Map<String, Object> client =
+                (Map<String, Object>) resourceAccess.getOrDefault(clientId, Collections.emptyMap());
+
+        List<String> roles =
+                (List<String>) client.getOrDefault(ROLES_LIST, Collections.emptyList());
+
+        return roles.stream()
+                .map(CustomJwtAuthenticationConverter::convertRolesToSimpleGrantedAuthority)
+                .toList();
+    }
+    /*@Override
+    public Collection<GrantedAuthority> convert(Jwt jwt) {
+        Map<String, Object> resourceAccess = jwt.getClaimAsMap(JWT_PATH);
         if (resourceAccess == null) {
             return Collections.emptyList();
         }
@@ -42,7 +62,7 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Collecti
         return roles.stream()
                     .map(CustomJwtAuthenticationConverter::convertRolesToSimpleGrantedAuthority)
                     .toList();
-    }
+    }*/
 
     private static GrantedAuthority convertRolesToSimpleGrantedAuthority(String role) {
         String rights = role;
