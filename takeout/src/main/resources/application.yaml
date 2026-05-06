@@ -28,3 +28,12 @@ springdoc:
     show-common-extensions: true
   api-docs:
     path: /v3/api-docs/valami
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,loggers
+  endpoint:
+    health:
+      show-details: always
