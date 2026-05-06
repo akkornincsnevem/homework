@@ -9,9 +9,13 @@ import hu.oe.takeout.takeout.generated.rest.model.CategoryRequest;
 import hu.oe.takeout.takeout.generated.rest.model.CategoryResponse;
 import hu.oe.takeout.takeout.generated.rest.model.IdModel;
 import hu.oe.takeout.takeout.generated.rest.model.TakeoutResponse;
+import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +31,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
 
+    @Cacheable("categories")
     public List<CategoryResponse> getAll() {
         log.info("Fetching all categories");
 
@@ -40,6 +45,7 @@ public class CategoryService {
         return result;
     }
 
+    @Cacheable(value = "category", key = "#id")
     public CategoryResponse getById(String id) {
         log.info("Fetching Category with id: {}", id);
         return categoryRepository.findById(UUID.fromString(id))
@@ -53,6 +59,7 @@ public class CategoryService {
                 });
     }
 
+    @Cacheable(value = "category", key = "#id")
     public void delete(String id) {
         UUID uuid = UUID.fromString(id);
 
@@ -65,6 +72,7 @@ public class CategoryService {
         log.info("Category deleted: {}", id);
     }
 
+    @CacheEvict(value = {"categories"}, allEntries = true)
     public IdModel create(CategoryRequest request) {
         log.info("Creating category: {}", request.getName());
         if (categoryRepository.existsByName(request.getName())) {
@@ -78,6 +86,10 @@ public class CategoryService {
         return modelMapper.map(saved, IdModel.class);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "category", key = "#id"),
+            @CacheEvict(value = "categories", allEntries = true)
+    })
     public Optional<IdModel> update(String id, CategoryRequest request) {
         log.info("Updating category: {}", id);
         UUID uuid = UUID.fromString(id);

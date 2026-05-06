@@ -12,6 +12,9 @@ import hu.oe.takeout.takeout.generated.rest.model.TakeoutResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.http.ResponseEntity;
 
@@ -28,6 +31,7 @@ public class TakeoutService {
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
 
+    @Cacheable("takeouts")
     public List<TakeoutResponse> getAll() {
         log.info("Fetching all takeouts");
 
@@ -41,6 +45,7 @@ public class TakeoutService {
         return result;
     }
 
+    @Cacheable(value = "takeout", key = "#id")
     public TakeoutResponse getById(String id) {
         log.info("Fetching takeout with id: {}", id);
         return takeoutRepository.findById(UUID.fromString(id))
@@ -54,6 +59,7 @@ public class TakeoutService {
                 });
     }
 
+    @CacheEvict(value = "takeout", key = "#id")
     public void delete(String id) {
         UUID uuid = UUID.fromString(id);
 
@@ -66,6 +72,7 @@ public class TakeoutService {
         log.info("Takeout deleted: {}", id);
     }
 
+    @CacheEvict(value = {"takeouts"}, allEntries = true)
     public IdModel create(TakeoutRequest request) {
         log.info("Creating takeout: {}", request.getName());
 
@@ -79,7 +86,7 @@ public class TakeoutService {
 
         Category category = categoryRepository
                 .findById(UUID.fromString(request.getCategoryId()))
-                .orElseThrow(()-> new RuntimeException("Category not found"));
+                .orElseThrow(()-> new BusinessException("Category not found"));
 
         entity.setCategory(category);
 
@@ -88,6 +95,10 @@ public class TakeoutService {
         return modelMapper.map(saved, IdModel.class);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "takeout", key = "#id"),
+            @CacheEvict(value = "takeouts", allEntries = true)
+    })
     public Optional<IdModel> update(String id, TakeoutRequest request) {
         log.info("Updating takeout: {}", id);
 
