@@ -48,6 +48,16 @@ services:
       - oe-network
 #    volumes:
 #      - ./realm-export.json:/opt/keycloak/data/import/realm.json
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - oe-network
+    restart: unless-stopped
 
 networks:
   oe-network:

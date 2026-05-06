@@ -73,7 +73,4 @@ public class CustomJwtAuthenticationConverter implements Converter<Jwt, Collecti
         }
         return new SimpleGrantedAuthority( SPRING_ROLE_PREFIX+rights);
     }
-
-
-
 }
