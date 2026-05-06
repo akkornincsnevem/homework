@@ -59,6 +59,16 @@ services:
       - oe-network
     restart: unless-stopped
 
+  grafana:
+    image: grafana/grafana:10.2.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - oe-network
+    restart: unless-stopped
+
+
 networks:
   oe-network:
     driver: bridge
