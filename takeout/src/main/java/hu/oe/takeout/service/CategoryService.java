@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +60,12 @@ public class CategoryService {
                 });
     }
 
-    @Cacheable(value = "category", key = "#id")
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "category", key = "#id"),
+                    @CacheEvict(value = "categories", allEntries = true)
+            }
+    )
     public void delete(String id) {
         UUID uuid = UUID.fromString(id);
 
@@ -72,7 +78,7 @@ public class CategoryService {
         log.info("Category deleted: {}", id);
     }
 
-    @CacheEvict(value = {"categories"}, allEntries = true)
+    @CacheEvict(value = "categories", allEntries = true)
     public IdModel create(CategoryRequest request) {
         log.info("Creating category: {}", request.getName());
         if (categoryRepository.existsByName(request.getName())) {
@@ -86,11 +92,9 @@ public class CategoryService {
         return modelMapper.map(saved, IdModel.class);
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "category", key = "#id"),
-            @CacheEvict(value = "categories", allEntries = true)
-    })
-    public Optional<IdModel> update(String id, CategoryRequest request) {
+    @CachePut(value = "category", key = "#id")
+    @CacheEvict(value = "categories", allEntries = true)
+    public IdModel update(String id, CategoryRequest request) {
         log.info("Updating category: {}", id);
         UUID uuid = UUID.fromString(id);
 
@@ -109,6 +113,6 @@ public class CategoryService {
                     Category saved = categoryRepository.save(existing);
                     log.info("Category updated: {}", id);
                     return modelMapper.map(saved, IdModel.class);
-                });
+                }).orElseThrow(() -> new BusinessException("error.category.notfound"));
     }
 }

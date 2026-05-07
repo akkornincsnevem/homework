@@ -29,6 +29,7 @@ spring:
   cache:
     redis:
       time-to-live: 600000
+      cache-null-values: false
 
 springdoc:
   swagger-ui:

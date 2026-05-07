@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -59,7 +60,12 @@ public class TakeoutService {
                 });
     }
 
-    @CacheEvict(value = "takeout", key = "#id")
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "takeout", key = "#id"),
+                    @CacheEvict(value = "takeouts", allEntries = true)
+            }
+    )
     public void delete(String id) {
         UUID uuid = UUID.fromString(id);
 
@@ -72,7 +78,7 @@ public class TakeoutService {
         log.info("Takeout deleted: {}", id);
     }
 
-    @CacheEvict(value = {"takeouts"}, allEntries = true)
+    @CacheEvict(value = "takeouts", allEntries = true)
     public IdModel create(TakeoutRequest request) {
         log.info("Creating takeout: {}", request.getName());
 
@@ -95,11 +101,9 @@ public class TakeoutService {
         return modelMapper.map(saved, IdModel.class);
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "takeout", key = "#id"),
-            @CacheEvict(value = "takeouts", allEntries = true)
-    })
-    public Optional<IdModel> update(String id, TakeoutRequest request) {
+    @CachePut(value = "takeout", key = "#id")
+    @CacheEvict(value = "takeouts", allEntries = true)
+    public IdModel update(String id, TakeoutRequest request) {
         log.info("Updating takeout: {}", id);
 
         UUID uuid = UUID.fromString(id);
@@ -125,6 +129,6 @@ public class TakeoutService {
                     Takeout saved = takeoutRepository.save(existing);
                     log.info("Takeout updated: {}", id);
                     return modelMapper.map(saved, IdModel.class);
-                });
+                }).orElseThrow(() -> new BusinessException("error.takeout.notfound"));
     }
 }

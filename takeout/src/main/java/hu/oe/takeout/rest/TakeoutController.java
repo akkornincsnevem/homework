@@ -43,9 +43,7 @@ public class TakeoutController implements DefaultApi {
 
     @Override
     public ResponseEntity<IdModel> categoriesIdPut(String id, CategoryRequest categoryRequest) {
-        return categoryService.update(id, categoryRequest)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.status(201).body(categoryService.create(categoryRequest));
     }
     
 
@@ -72,9 +70,9 @@ public class TakeoutController implements DefaultApi {
 
     @Override
     public ResponseEntity<IdModel> takeoutIdPut(String id, TakeoutRequest takeoutRequest) {
-        return takeoutService.update(id, takeoutRequest)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(
+                takeoutService.update(id, takeoutRequest)
+        );
     }
 
     @Override
